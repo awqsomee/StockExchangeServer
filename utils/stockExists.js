@@ -1,10 +1,10 @@
 const config = require('config');
 const axios = require('axios');
 
-module.exports = async (symbol) => {
+module.exports = async (keywords) => {
   try {
     const response = await axios.get(
-      `${config.get('AV')}${config.get('AV_SYMBOL_SEARCH')}${symbol}${config.get('apiKey')}`
+      `${config.get('AV')}/query?${config.get('search')}${keywords}${config.get('apiKey')}`
     );
     return response.data.bestMatches[0];
   } catch (e) {

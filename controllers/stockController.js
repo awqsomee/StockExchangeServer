@@ -41,9 +41,8 @@ class StockController {
       if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' });
       // Пользователь, отправивший запрос
       let user = await User.findOne({ _id: req.user.id });
-
-      const response = await stockService.buyStock(user, stock, quantity);
-      stock = response.stock;
+      const price = getPrice(stock.symbol);
+      stock = await stockService.buyStock(user, price, stock, quantity);
       await user.save();
       await stock.save();
       return res.json(stock);
@@ -56,11 +55,8 @@ class StockController {
     try {
       const stocks = await Stock.find({ user: req.user.id });
       if (req.query.symbol) {
-        const existResponse = await axios.get(
-          `${config.get('AV')}${config.get('AV_SYMBOL_SEARCH')}${req.query.symbol}${config.get('apiKey')}`
-        );
+        if (!(await stockExists(stock.symbol))) return res.status(400).json({ message: 'Stock not found' });
         const stock = existResponse.data.bestMatches[0];
-        if (!stock) return res.status(400).json({ message: 'Stock not found' });
         const price = await getPrice(req.query.symbol);
         return res.json({ ...stock, price });
       }
@@ -83,13 +79,8 @@ class StockController {
       if (!stock) {
         return res.status(400).json({ message: 'Stock not found' });
       }
-      const response = await axios.get(
-        `${config.get('AV')}${config.get('AV_TIME_SERIES_INTRADAY')}${stock.symbol}${config.get('apiKey')}`
-      );
-      const dailyStockPrices = response.data['Time Series (5min)'];
-      const dates = Object.keys(dailyStockPrices);
-      const currentPrice = dailyStockPrices[dates[0]]['4. close'];
-      stockService.sellStock(user, stock, currentPrice, quantity);
+      const price = getPrice(stock.symbol);
+      stockService.sellStock(user, stock, price, quantity);
       if (!stock.quantity) {
         await stock.remove();
         await user.save();

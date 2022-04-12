@@ -4,8 +4,7 @@ const balanceService = require('./balanceService');
 const getPrice = require('../utils/getPrice');
 
 class StockService {
-  async buyStock(user, stock, quantity) {
-    const price = Number(await getPrice(stock.symbol));
+  async buyStock(user, price, stock, quantity) {
     if (price > 0) {
       balanceService.withdraw(user, price * quantity);
       // Уже купленные акции
@@ -15,10 +14,7 @@ class StockService {
         purchasedStock.quantity += stock.quantity;
         stock = purchasedStock;
       }
-      return {
-        stock: stock,
-        price: price,
-      };
+      return stock;
     } else return { message: 'Bad request' };
   }
 
