@@ -4,7 +4,6 @@ const Stock = require('../models/Stock')
 const stockService = require('../services/stockService')
 const compareTime = require('../utils/compareTime')
 const User = require('../models/User')
-const getPrice = require('../utils/getPrice')
 const stockExists = require('../utils/stockExists')
 
 class StockController {
@@ -41,7 +40,7 @@ class StockController {
       if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
       // Пользователь, отправивший запрос
       let user = await User.findOne({ _id: req.user.id })
-      const price = await getPrice(stock.symbol)
+      const price = await stockService.getPrice(stock.symbol)
       stock = await stockService.buyStock(user, price * quantity, stock)
       await stock.save()
       await user.save()
@@ -67,7 +66,7 @@ class StockController {
       if (req.query.symbol) {
         const stock = await stockExists(req.query.symbol)
         if (!stock) return res.status(400).json({ message: 'Stock not found' })
-        const price = await getPrice(req.query.symbol)
+        const price = await stockService.getPrice(req.query.symbol)
         return res.json({ ...stock, price })
       }
       return res.json(stocks)
@@ -88,7 +87,7 @@ class StockController {
       if (!stock) {
         return res.status(400).json({ message: 'Stock not found' })
       }
-      const price = await getPrice(stock.symbol)
+      const price = await stockService.getPrice(stock.symbol)
       stock = stockService.sellStock(user, stock, price, quantity)
       if (!stock.quantity) {
         await stock.remove()

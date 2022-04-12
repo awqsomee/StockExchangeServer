@@ -20,17 +20,17 @@ module.exports = (stock) => {
   //
   // Если нужно насильно включить торги
   //
-  currentTime.setTime(
-    Date.parse(
-      `${currentTime.getUTCMonth()} ${currentTime.getUTCDate()} ${currentTime.getUTCFullYear()} 14:${Number(
-        stock.marketOpen.slice(3, 5)
-      )}:00 GMT${stockTimezoneOffset}00`
-    )
-  )
+  // currentTime.setTime(
+  //   Date.parse(
+  //     `${currentTime.getUTCMonth()} ${currentTime.getUTCDate()} ${currentTime.getUTCFullYear()} 14:${Number(
+  //       stock.marketOpen.slice(3, 5)
+  //     )}:00 GMT${stockTimezoneOffset}00`
+  //   )
+  // )
   //
-  console.log(openTime)
-  console.log(currentTime)
-  console.log(closeTime)
+  // console.log(openTime)
+  // console.log(currentTime)
+  // console.log(closeTime)
   if (currentTime > openTime && currentTime < closeTime) {
     return true
   } else return false

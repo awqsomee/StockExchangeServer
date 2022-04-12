@@ -8,6 +8,8 @@
   "dailyTS": "function=TIME_SERIES_DAILY&symbol=",
   "weeklyTS": "function=TIME_SERIES_WEEKLY&symbol=",
   "monthlyTS": "function=TIME_SERIES_MONTHLY&symbol=",
+  "currencyER": "function=CURRENCY_EXCHANGE_RATE",
+  "intradayFX": "function=FX_INTRADAY",
   "apiKey": "&apikey=4GDOB0DSWHWXGP9C",
   "apiKey2": "&apikey=ACBVRHUCTP4LTHVX"
 }
