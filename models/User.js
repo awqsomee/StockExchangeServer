@@ -1,4 +1,4 @@
-const { Schema, model, ObjectId } = require('mongoose');
+const { Schema, model, ObjectId } = require('mongoose')
 
 const User = new Schema({
   email: { type: String, required: true, unique: true },
@@ -17,6 +17,6 @@ const User = new Schema({
   balanceUSD: { type: Number, default: 0 },
 
   stocks: { type: ObjectId, ref: 'Stock' },
-});
+})
 
-module.exports = model('User', User);
+module.exports = model('User', User)
