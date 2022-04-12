@@ -9,7 +9,7 @@ const Stock = require('../models/Stock');
 const router = new Router();
 
 router.post(
-  '/registrationn',
+  '/registration',
   [
     check('email', 'Uncorrect email').isEmail(),
     check('password', 'Password must be longer than 3 and shorter than 16').isLength({ min: 3, max: 16 }),
