@@ -4,6 +4,6 @@ const stockController = require('../controllers/stockController')
 
 const router = new Router()
 
-router.get('', authMiddleware, stockController.getStocks)
+router.get('', stockController.getStocks)
 
 module.exports = router
