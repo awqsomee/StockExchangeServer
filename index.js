@@ -4,6 +4,7 @@ const config = require('config')
 const authRouter = require('./routes/auth.routes')
 const stockRouter = require('./routes/stock.routes')
 const balanceRouter = require('./routes/balance.routes')
+const stockRouterAuth = require('./routes/stock.routesAuth')
 const corsMiddleware = require('./middleware/cors.middleware')
 
 const app = express()
@@ -14,7 +15,8 @@ app.use(corsMiddleware)
 app.use(express.json())
 app.use('/api/auth', authRouter)
 app.use('/api/auth/balance', balanceRouter)
-app.use('/api/auth/stock', stockRouter)
+app.use('/api/stock', stockRouter)
+app.use('/api/auth/stock', stockRouterAuth)
 
 const start = async () => {
   try {
