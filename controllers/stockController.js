@@ -39,6 +39,7 @@ class StockController {
       let user = await User.findOne({ _id: req.user.id })
       const price = await stockService.getPrice(stock.symbol)
       stock = await stockService.buyStock(user, price * quantity, stock)
+      if (!stock.symbol) return res.status(400).json({ message: 'aplhavangage.com error' })
       await stock.save()
       await user.save()
       return res.json({
@@ -53,7 +54,8 @@ class StockController {
         price,
       })
     } catch (e) {
-      return res.status(500).json(e)
+      console.log(e)
+      return res.json(e.message)
     }
   }
 

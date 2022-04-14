@@ -6,16 +6,21 @@ const balanceService = require('./balanceService')
 
 class StockService {
   async buyStock(user, cost, stock) {
-    if (cost > 0) {
-      user = balanceService.currencySwitch(user, -cost, stock.currency)
-      // Уже купленные акции
-      const purchasedStock = await Stock.findOne({ symbol: stock.symbol, user: user.id })
-      if (purchasedStock) {
-        purchasedStock.quantity += stock.quantity
-        stock = purchasedStock
-      }
-      return stock
-    } else return { message: 'Bad requested' }
+    try {
+      if (cost > 0) {
+        user = balanceService.currencySwitch(user, -cost, stock.currency)
+        // Уже купленные акции
+        const purchasedStock = await Stock.findOne({ symbol: stock.symbol, user: user.id })
+        if (purchasedStock) {
+          purchasedStock.quantity += stock.quantity
+          stock = purchasedStock
+        }
+        return stock
+      } else return { message: 'Bad request' }
+    } catch (e) {
+      console.log(e)
+      return e
+    }
   }
 
   sellStock(user, stock, price, quantity) {
