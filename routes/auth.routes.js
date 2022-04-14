@@ -32,8 +32,8 @@ router.post(
           message: `User with email ${email} already exists`,
         })
       }
-      const hashPassword = bcrypt.hash(password, 8)
-      const user = new User({ email, password: hashPassword, name, surname })
+      const hashPassword = await bcrypt.hash(password, 8)
+      const user = new User({ email, password, name, surname })
       await user.save()
       return res.json({ message: 'User was created' })
     } catch (e) {
