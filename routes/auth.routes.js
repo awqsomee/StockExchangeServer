@@ -25,7 +25,9 @@ router.post(
 
       const { email, password, name, surname } = req.body
       const lowerCaseEmail = email.toLowerCase()
-      const candidate = await User.findOne({ lowerCaseEmail })
+      console.log(lowerCaseEmail)
+      const candidate = await User.findOne({ email: lowerCaseEmail })
+      console.log(candidate)
 
       if (candidate) {
         return res.status(400).json({
@@ -51,7 +53,7 @@ router.post(
       const { email, password } = req.body
       const lowerCaseEmail = email.toLowerCase()
       console.log(lowerCaseEmail)
-      const user = await User.findOne({ lowerCaseEmail })
+      const user = await User.findOne({ email: lowerCaseEmail })
       if (!user) {
         return res.status(404).json({ message: 'User not found' })
       }
