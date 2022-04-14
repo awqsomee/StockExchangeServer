@@ -23,9 +23,9 @@ router.post(
         return res.status(400).json({ message: 'Uncorrect request', errors })
       }
 
-      let { email, password, name, surname } = req.body
-      email = email.toLowerCase()
-      const candidate = await User.findOne({ email })
+      const { email, password, name, surname } = req.body
+      const lowerCaseEmail = email.toLowerCase()
+      const candidate = await User.findOne({ lowerCaseEmail })
 
       if (candidate) {
         return res.status(400).json({
@@ -33,7 +33,7 @@ router.post(
         })
       }
       const hashPassword = await bcrypt.hash(password, 8)
-      const user = new User({ email, password: hashPassword, name, surname })
+      const user = new User({ email: lowerCaseEmail, password: hashPassword, name, surname })
       await user.save()
       return res.json({ message: 'User was created' })
     } catch (e) {
@@ -49,11 +49,13 @@ router.post(
   async (req, res) => {
     try {
       const { email, password } = req.body
-      const user = await User.findOne({ email })
+      const lowerCaseEmail = email.toLowerCase()
+      console.log(lowerCaseEmail)
+      const user = await User.findOne({ lowerCaseEmail })
       if (!user) {
         return res.status(404).json({ message: 'User not found' })
       }
-      const isPassValid = await bcrypt.compareSync(password, user.password)
+      const isPassValid = bcrypt.compareSync(password, user.password)
       if (!isPassValid) {
         return res.status(400).json({ message: 'Invalid password' })
       }

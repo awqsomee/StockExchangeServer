@@ -5,28 +5,27 @@ const stockService = require('../services/stockService')
 const compareTime = require('../utils/compareTime')
 const User = require('../models/User')
 const stockExists = require('../utils/stockExists')
+const { response } = require('express')
 
 class StockController {
   async buyStock(req, res) {
     try {
-      // Получаем данные из Alpha Vantage API
-      const request = req.body
-      const symbol = request['1. symbol']
-      const name = request['2. name']
-      const type = request['3. type']
-      const region = request['4. region']
-      const marketOpen = request['5. marketOpen']
-      const marketClose = request['6. marketClose']
-      const timezone = request['7. timezone']
-      const currency = request['8. currency']
-      const quantity = Number(request['quantity'])
+      const { symbol, quantity } = req.body
       if (quantity <= 0) return res.status(400).json('Bad request')
+      const response = await stockExists(symbol)
+      if (!response) return res.status(400).json({ message: 'Stock not found' })
+      // Получаем данные из Alpha Vantage API
+      const name = response['2. name']
+      const marketOpen = response['5. marketOpen']
+      const marketClose = response['6. marketClose']
+      const timezone = response['7. timezone']
+      const currency = response['8. currency']
+
       // Записываем данные в модель акции
+
       let stock = new Stock({
         symbol,
         name,
-        type,
-        region,
         marketOpen,
         marketClose,
         timezone,
@@ -35,9 +34,7 @@ class StockController {
         quantity,
       })
 
-      if (!(await stockExists(stock.symbol))) return res.status(400).json({ message: 'Stock not found' })
-
-      if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
+      // if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
       // Пользователь, отправивший запрос
       let user = await User.findOne({ _id: req.user.id })
       const price = await stockService.getPrice(stock.symbol)
@@ -59,6 +56,60 @@ class StockController {
       return res.status(500).json(e)
     }
   }
+
+  // async buyStock(req, res) {
+  //   try {
+  //     // Получаем данные из Alpha Vantage API
+  //     const request = req.body
+  //     const symbol = request['1. symbol']
+  //     const name = request['2. name']
+  //     const type = request['3. type']
+  //     const region = request['4. region']
+  //     const marketOpen = request['5. marketOpen']
+  //     const marketClose = request['6. marketClose']
+  //     const timezone = request['7. timezone']
+  //     const currency = request['8. currency']
+  //     const quantity = Number(request['quantity'])
+
+  //     if (quantity <= 0) return res.status(400).json('Bad request')
+  //     // Записываем данные в модель акции
+  //     let stock = new Stock({
+  //       symbol,
+  //       name,
+  //       type,
+  //       region,
+  //       marketOpen,
+  //       marketClose,
+  //       timezone,
+  //       currency,
+  //       user: req.user.id,
+  //       quantity,
+  //     })
+
+  //     if (!(await stockExists(stock.symbol))) return res.status(400).json({ message: 'Stock not found' })
+
+  //     if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
+  //     // Пользователь, отправивший запрос
+  //     let user = await User.findOne({ _id: req.user.id })
+  //     const price = await stockService.getPrice(stock.symbol)
+  //     stock = await stockService.buyStock(user, price * quantity, stock)
+  //     await stock.save()
+  //     await user.save()
+  //     return res.json({
+  //       stock,
+  //       user: {
+  //         id: user.id,
+  //         email: user.email,
+  //         balanceRUB: user.balanceRUB,
+  //         balanceUSD: user.balanceUSD,
+  //         stocks: user.stocks,
+  //       },
+  //       price,
+  //     })
+  //   } catch (e) {
+  //     return res.status(500).json(e)
+  //   }
+  // }
 
   async getStocks(req, res) {
     try {
