@@ -95,6 +95,8 @@ router.get('/auth', authMiddleware, async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name,
+        name: user.surname,
         balanceRUB: user.balanceRUB,
         balanceUSD: user.balanceUSD,
         stocks: user.stocks,
