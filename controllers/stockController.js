@@ -6,6 +6,8 @@ const compareTime = require('../utils/compareTime')
 const User = require('../models/User')
 const stockExists = require('../utils/stockExists')
 const { response } = require('express')
+const { transaction } = require('../services/balanceService')
+const Transaction = require('../models/Transaction')
 
 class StockController {
   async buyStock(req, res) {
@@ -41,8 +43,19 @@ class StockController {
       if (!price) return res.status(400).json({ message: price })
       stock = await stockService.buyStock(user, price * quantity, stock)
       if (!stock.symbol) return res.status(400).json({ message: stock })
+      const transaction = new Transaction({
+        type: 'Куплено',
+        symbol: stock.symbol,
+        price: pricey,
+        date: Date(),
+        quantity: quantity,
+        currency: stock.currency,
+        user: user.id,
+      })
+      user.transactions.push(transaction.id)
       await stock.save()
       await user.save()
+      await transaction.save()
       return res.json({
         stock,
         user: {
@@ -145,7 +158,15 @@ class StockController {
       const price = await stockService.getPrice(stock.symbol)
 
       stock = stockService.sellStock(user, stock, price, quantity)
-      console.log(stock)
+      const transaction = new Transaction({
+        type: 'Продано',
+        symbol: stock.symbol,
+        price: price,
+        date: Date(),
+        quantity: quantity,
+        currency: stock.currency,
+        user: user.id,
+      })
       if (!stock.quantity) {
         await stock.remove()
         await user.save()
@@ -153,6 +174,7 @@ class StockController {
         await stock.save()
         await user.save()
       }
+      await transaction.save()
       return res.json({
         stock,
         user: {

@@ -10,8 +10,16 @@ class balanceController {
       const { replenish, currency } = req.body
       if (!(typeof replenish === 'number' && replenish > 0))
         return res.status(400).json({ message: 'Replenish must be positive' })
+      const transaction = new Transaction({
+        type: 'Пополнение',
+        price: price,
+        date: Date(),
+        currency: currency,
+        user: user.id,
+      })
       user = balanceService.currencySwitch(user, replenish, currency)
       await user.save()
+      await transaction.save()
       return res.json(user)
     } catch (e) {
       return res.status(400).json(e)
@@ -49,7 +57,15 @@ class balanceController {
         default:
           throw 'Currency Error'
       }
+      const transaction = new Transaction({
+        type: 'Обмен',
+        price: price,
+        date: Date(),
+        currency: currency,
+        user: user.id,
+      })
       user.save()
+      transaction.save()
       return res.json({
         id: user.id,
         email: user.email,
@@ -68,7 +84,15 @@ class balanceController {
       const currency = req.query.currency
       if (!withdraw > 0) return res.status(400).json({ message: 'Withdraw must be positive' })
       user = balanceService.currencySwitch(user, -withdraw, currency)
+      const transaction = new Transaction({
+        type: 'Снятие',
+        price: price,
+        date: Date(),
+        currency: currency,
+        user: user.id,
+      })
       await user.save()
+      await transaction.save()
       return res.json(user)
     } catch (e) {
       return res.status(400).json(e)
