@@ -1,6 +1,6 @@
 {
   "serverPort": 5000,
-  "dbUrl": "mongodb+srv://StockExchangeUser:HlAmMKHyXmKhaSHv@cluster0.3e3yw.mongodb.net/StockExchange?retryWrites=true&w=majority",
+  "dbUrl": "mongodb+srv://StockExchangeUser:HlAmMKHyXmKhaSHv@cluster0.3e3yw.mongodb.net/STONKS?retryWrites=true&w=majority",
   "key": "f9c91350b94e25db6f1566c767f94dbd",
   "AV": "https://www.alphavantage.co",
   "search": "function=SYMBOL_SEARCH&keywords=",

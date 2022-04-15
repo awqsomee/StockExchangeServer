@@ -2,7 +2,7 @@ const { use } = require('bcrypt/promises')
 const User = require('../models/User')
 const balanceService = require('../services/balanceService')
 const currencyService = require('../services/currencyService')
-
+const Transaction = require('../models/Transaction')
 class balanceController {
   async replenish(req, res) {
     try {
@@ -12,12 +12,15 @@ class balanceController {
         return res.status(400).json({ message: 'Replenish must be positive' })
       const transaction = new Transaction({
         type: 'Пополнение',
-        price: price,
+        price: replenish,
         date: Date(),
         currency: currency,
         user: user.id,
       })
       user = balanceService.currencySwitch(user, replenish, currency)
+      user.transactions.push(transaction.id)
+      console.log('la kill', transaction)
+      console.log('doa', user)
       await user.save()
       await transaction.save()
       return res.json(user)
@@ -59,11 +62,12 @@ class balanceController {
       }
       const transaction = new Transaction({
         type: 'Обмен',
-        price: price,
+        price: quantity,
         date: Date(),
         currency: currency,
         user: user.id,
       })
+      user.transactions.push(transaction.id)
       user.save()
       transaction.save()
       return res.json({
@@ -86,11 +90,13 @@ class balanceController {
       user = balanceService.currencySwitch(user, -withdraw, currency)
       const transaction = new Transaction({
         type: 'Снятие',
-        price: price,
+        price: withdraw,
         date: Date(),
         currency: currency,
         user: user.id,
       })
+      console.log(transaction)
+      user.transactions.push(transaction.id)
       await user.save()
       await transaction.save()
       return res.json(user)

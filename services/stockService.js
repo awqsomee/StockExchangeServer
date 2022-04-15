@@ -36,9 +36,11 @@ class StockService {
   }
   async getPrice(symbol) {
     try {
+      console.log(`${config.get('AV')}/query?${config.get('intradayTS')}${symbol}${config.get('apiKey')}`)
       const response = await axios.get(
         `${config.get('AV')}/query?${config.get('intradayTS')}${symbol}${config.get('apiKey')}`
       )
+      console.log(response.data)
       if (!response.data['Time Series (5min)']) throw response.data
       const dailyStockPrices = response.data['Time Series (5min)']
       const dates = Object.keys(dailyStockPrices)

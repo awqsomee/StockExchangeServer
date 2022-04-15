@@ -5,7 +5,6 @@ const stockService = require('../services/stockService')
 const compareTime = require('../utils/compareTime')
 const User = require('../models/User')
 const stockExists = require('../utils/stockExists')
-const { response } = require('express')
 const { transaction } = require('../services/balanceService')
 const Transaction = require('../models/Transaction')
 
