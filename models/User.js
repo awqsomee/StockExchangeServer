@@ -12,11 +12,12 @@ const User = new Schema({
   phoneNumber: { type: String, default: null },
   passportNumber: { type: String, default: null },
 
-  paymentCards: { type: ObjectId, ref: 'PaymentCard' },
+  paymentCards: [{ type: ObjectId, ref: 'PaymentCard' }],
   balanceRUB: { type: Number, default: 0 },
   balanceUSD: { type: Number, default: 0 },
 
-  stocks: { type: ObjectId, ref: 'Stock' },
+  stocks: [{ type: ObjectId, ref: 'Stock' }],
+  transactions: [{ type: ObjectId, ref: 'Transactions' }],
 })
 
 module.exports = model('User', User)

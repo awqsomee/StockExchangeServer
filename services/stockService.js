@@ -9,6 +9,7 @@ class StockService {
     try {
       if (cost > 0) {
         user = balanceService.currencySwitch(user, -cost, stock.currency)
+        user.stocks.push(stock.id)
         if (!user.id) throw user
         // Уже купленные акции
         const purchasedStock = await Stock.findOne({ symbol: stock.symbol, user: user.id })

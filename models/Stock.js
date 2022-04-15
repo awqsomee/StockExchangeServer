@@ -7,7 +7,7 @@ const Stock = new Schema({
   marketClose: { type: String, required: true },
   timezone: { type: String, required: true },
   currency: { type: String, required: true },
-
+  price: { type: Number, required: true },
   user: { type: ObjectId, ref: 'User' },
   quantity: { type: Number, default: 0 },
 })
