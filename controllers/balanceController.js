@@ -23,7 +23,7 @@ class balanceController {
       console.log('doa', user)
       await user.save()
       await transaction.save()
-      return res.json(user)
+      return res.json({ user, message: 'Сделка прошла успешно' })
     } catch (e) {
       return res.status(400).json(e)
     }
@@ -38,8 +38,10 @@ class balanceController {
   }
   async convert(req, res) {
     try {
+      console.log(req.body)
       let user = await User.findOne({ _id: req.user.id })
       const { fromCurrency, toCurrency, quantity } = req.body
+      console.log(req.body)
       if (!(typeof quantity === 'number' && quantity > 0))
         return res.status(400).json({ message: 'Quantity must be positive' })
       switch (fromCurrency) {
@@ -64,7 +66,7 @@ class balanceController {
         type: 'Обмен',
         price: quantity,
         date: Date(),
-        currency: currency,
+        currency: `${fromCurrency}-${toCurrency}`,
         user: user.id,
       })
       user.transactions.push(transaction.id)
@@ -99,7 +101,7 @@ class balanceController {
       user.transactions.push(transaction.id)
       await user.save()
       await transaction.save()
-      return res.json(user)
+      return res.json({ user, message: 'Сделка прошла успешно' })
     } catch (e) {
       return res.status(400).json(e)
     }

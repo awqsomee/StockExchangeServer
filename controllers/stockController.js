@@ -65,6 +65,7 @@ class StockController {
           stocks: user.stocks,
         },
         price,
+        message: 'Сделка прошла успешно',
       })
     } catch (e) {
       console.log(e)
@@ -185,6 +186,7 @@ class StockController {
           stocks: user.stocks,
         },
         price,
+        message: 'Сделка прошла успешно',
       })
     } catch (e) {
       return res.status(400).json('Stock not found')
