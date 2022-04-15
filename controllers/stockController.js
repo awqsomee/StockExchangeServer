@@ -38,8 +38,9 @@ class StockController {
       // Пользователь, отправивший запрос
       let user = await User.findOne({ _id: req.user.id })
       const price = await stockService.getPrice(stock.symbol)
+      if (!price) return res.status(400).json({ message: price })
       stock = await stockService.buyStock(user, price * quantity, stock)
-      if (!stock.symbol) return res.status(400).json({ message: 'aplhavangage.com error' })
+      if (!stock.symbol) return res.status(400).json({ message: stock })
       await stock.save()
       await user.save()
       return res.json({
@@ -133,15 +134,18 @@ class StockController {
     try {
       let stock = await Stock.findOne({ _id: req.query.id, user: req.user.id })
       let user = await User.findOne({ _id: req.user.id })
+      if (!stock) {
+        return res.status(400).json({ message: 'Stock not found' })
+      }
       let quantity = req.query.quantity
       quantity = Number(quantity)
       if (quantity <= 0) return res.status(400).json('Quantity must be positive')
       if (quantity > stock.quantity) return res.status(400).json('Not enough stocks')
-      if (!stock) {
-        return res.status(400).json({ message: 'Stock not found' })
-      }
+
       const price = await stockService.getPrice(stock.symbol)
+
       stock = stockService.sellStock(user, stock, price, quantity)
+      console.log(stock)
       if (!stock.quantity) {
         await stock.remove()
         await user.save()

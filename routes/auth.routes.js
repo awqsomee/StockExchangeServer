@@ -5,7 +5,6 @@ const config = require('config')
 const { check, validationResult } = require('express-validator')
 const User = require('../models/User')
 const authMiddleware = require('../middleware/auth.middleware')
-const Stock = require('../models/Stock')
 const router = new Router()
 
 router.post(
@@ -36,6 +35,7 @@ router.post(
       }
       const hashPassword = await bcrypt.hash(password, 8)
       const user = new User({ email: lowerCaseEmail, password: hashPassword, name, surname })
+      console.log(user)
       await user.save()
       return res.json({ message: 'User was created' })
     } catch (e) {
@@ -85,6 +85,7 @@ router.post(
 
 router.get('/auth', authMiddleware, async (req, res) => {
   try {
+    console.log(req)
     const user = await User.findOne({ _id: req.user.id })
     const token = jwt.sign({ id: user.id }, config.get('key'), {
       expiresIn: '24h',
