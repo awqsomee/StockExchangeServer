@@ -5,7 +5,6 @@ const stockService = require('../services/stockService')
 const compareTime = require('../utils/compareTime')
 const User = require('../models/User')
 const stockExists = require('../utils/stockExists')
-const { transaction } = require('../services/balanceService')
 const Transaction = require('../models/Transaction')
 
 class StockController {
@@ -42,10 +41,11 @@ class StockController {
       if (!price) return res.status(400).json({ message: price })
       stock = await stockService.buyStock(user, price * quantity, stock)
       if (!stock.symbol) return res.status(400).json({ message: stock })
+      stock.price = price
       const transaction = new Transaction({
         type: 'Куплено',
         symbol: stock.symbol,
-        price: pricey,
+        price: price,
         date: Date(),
         quantity: quantity,
         currency: stock.currency,
@@ -166,6 +166,7 @@ class StockController {
         currency: stock.currency,
         user: user.id,
       })
+      user.transactions.push(transaction.id)
       if (!stock.quantity) {
         await stock.remove()
         await user.save()
