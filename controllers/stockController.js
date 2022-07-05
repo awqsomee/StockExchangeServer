@@ -34,7 +34,7 @@ class StockController {
         quantity,
       })
 
-      // if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
+      if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
       // Пользователь, отправивший запрос
       let user = await User.findOne({ _id: req.user.id })
       const price = await stockService.getPrice(stock.symbol)
