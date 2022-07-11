@@ -129,18 +129,20 @@ class StockController {
 
   async getStocks(req, res) {
     try {
-      if (req.query.symbol) {
-        const stock = await stockExists(req.query.symbol)
-        if (!stock) return res.status(400).json({ message: 'Stock not found' })
-        const price = await stockService.getPrice(req.query.symbol)
-        return res.json({ ...stock, price })
-      }
-      const stocks = await Stock.find({ user: req.user.id })
-      return res.json(stocks)
+      if (!req.query.symbol) return res.json('Search query is empty')
+      const symbol = req.query.symbol
+      const stock = await stockExists(symbol)
+      if (!stock) return res.status(400).json({ message: 'Stock not found' })
+      const price = await stockService.getPrice(symbol)
+      return res.json({ ...stock, price })
     } catch (e) {
-      console.log(e)
-      return res.status(500).json(e.message)
+      return res.status(500).json(e)
     }
+  }
+
+  async getUserStocks() {
+    // const stocks = await Stock.find({ user: req.user.id })
+    // return res.json(stocks)
   }
 
   async sellStock(req, res) {

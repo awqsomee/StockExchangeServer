@@ -6,9 +6,10 @@ module.exports = async (keywords) => {
     const response = await axios.get(
       `${config.get('AV')}/query?${config.get('search')}${keywords}${config.get('apiKey')}`
     )
-    return response.data.bestMatches[0]
+    if (response.data.bestMatches) {
+      return response.data.bestMatches[0]
+    } else throw response.data
   } catch (e) {
-    console.log(e)
-    return e.message
+    throw e
   }
 }
