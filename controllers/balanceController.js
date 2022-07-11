@@ -1,4 +1,3 @@
-const { use } = require('bcrypt/promises')
 const User = require('../models/User')
 const balanceService = require('../services/balanceService')
 const currencyService = require('../services/currencyService')
