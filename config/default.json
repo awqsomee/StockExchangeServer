@@ -1,0 +1,15 @@
+{
+  "serverPort": 5000,
+  "dbUrl": "mongodb+srv://StockExchangeUser:HlAmMKHyXmKhaSHv@cluster0.3e3yw.mongodb.net/STONKS?retryWrites=true&w=majority",
+  "key": "f9c91350b94e25db6f1566c767f94dbd",
+  "AV": "https://www.alphavantage.co",
+  "search": "function=SYMBOL_SEARCH&keywords=",
+  "intradayTS": "function=TIME_SERIES_INTRADAY&interval=5min&symbol=",
+  "dailyTS": "function=TIME_SERIES_DAILY&symbol=",
+  "weeklyTS": "function=TIME_SERIES_WEEKLY&symbol=",
+  "monthlyTS": "function=TIME_SERIES_MONTHLY&symbol=",
+  "currencyER": "function=CURRENCY_EXCHANGE_RATE",
+  "intradayFX": "function=FX_INTRADAY",
+  "apiKey": "&apikey=4GDOB0DSWHWXGP9C",
+  "apiKey2": "&apikey=ACBVRHUCTP4LTHVX"
+}
