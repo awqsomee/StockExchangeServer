@@ -155,6 +155,7 @@ class StockService {
         })
       )
       result = result.filter((value) => value != null)
+      if (result.length == 0) throw { message: 'Акции не найдены' }
       if (result != null) return result
     } else {
       throw { message: 'Акции не найдены' }
