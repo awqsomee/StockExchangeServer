@@ -1,7 +1,7 @@
-const config = require('config')
-const axios = require('axios')
+import config from 'config'
+import axios from 'axios'
 
-module.exports = async (keywords) => {
+export default async (keywords) => {
   try {
     const response = await axios.get(
       `${config.get('AV')}/query?${config.get('search')}${keywords}${config.get('apiKey')}`

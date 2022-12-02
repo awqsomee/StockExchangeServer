@@ -1,4 +1,4 @@
-module.exports = (stock) => {
+export default (stock) => {
   let currentTime = new Date()
   let stockTimezoneOffset = Number(stock.timezone.slice(3, 6))
   let openTime = new Date()

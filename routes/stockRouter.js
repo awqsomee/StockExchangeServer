@@ -1,11 +1,14 @@
-const Router = require('express')
-const authMiddleware = require('../middleware/auth.middleware')
-const stockController = require('../controllers/stockController')
+import { Router } from 'express'
+import authMiddleware from '../middleware/authMiddleware.js'
+import stockController from '../controllers/stockController.js'
 
 const router = new Router()
 
-router.post('', authMiddleware, stockController.buyStock)
-router.get('', authMiddleware, stockController.getStocks)
-router.delete('/', authMiddleware, stockController.sellStock)
+// TODO: Cash data
+router.get('', stockController.getStockInfo)
+router.get('/search', stockController.findStock)
+router.post('/auth', authMiddleware, stockController.buyStock)
+router.get('/auth', authMiddleware, stockController.getUserStocks)
+router.delete('/auth/', authMiddleware, stockController.sellStock)
 
-module.exports = router
+export default router

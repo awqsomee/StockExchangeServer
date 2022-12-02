@@ -1,19 +1,18 @@
-const Transaction = require('../models/Transaction')
-const User = require('../models/User')
+import transactionService from '../services/transactionService.js'
 
 class TransactionController {
   async showTransactions(req, res) {
     try {
-      const transactions = await Transaction.find({ user: req.user.id })
-      console.log(transactions)
+      const currentUser = req.user
+      const transactions = await transactionService.showAllTransactions(currentUser)
       return res.json({
-        user: req.user.id,
         transactions,
+        message: 'Transactions have been recieved',
       })
     } catch (e) {
-      console.log(e)
+      return res.status(400).json(e)
     }
   }
 }
 
-module.exports = new TransactionController()
+export default new TransactionController()

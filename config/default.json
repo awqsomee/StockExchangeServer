@@ -11,5 +11,11 @@
   "currencyER": "function=CURRENCY_EXCHANGE_RATE",
   "intradayFX": "function=FX_INTRADAY",
   "apiKey": "&apikey=4GDOB0DSWHWXGP9C",
-  "apiKey2": "&apikey=ACBVRHUCTP4LTHVX"
+  "apiKey2": "&apikey=ACBVRHUCTP4LTHVX",
+  "finnhub": {
+    "APIKey": "cb5udaiad3i0dk7basqg",
+    "sandboxAPIKey": "sandbox_cb5udaiad3i0dk7basr0",
+    "symbolLookup": "https://finnhub.io/api/v1/search?q=",
+    "quote": "https://finnhub.io/api/v1/quote?symbol="
+  }
 }

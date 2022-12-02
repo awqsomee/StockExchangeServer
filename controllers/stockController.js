@@ -1,75 +1,50 @@
-const axios = require('axios')
-const config = require('config')
-const Stock = require('../models/Stock')
-const stockService = require('../services/stockService')
-const compareTime = require('../utils/compareTime')
-const User = require('../models/User')
-const stockExists = require('../utils/stockExists')
-const Transaction = require('../models/Transaction')
+import stockService from '../services/stockService.js'
+import Stock from '../models/Stock.js'
+import User from '../models/User.js'
+import stockExists from '../utils/stockExists.js'
+import Transaction from '../models/Transaction.js'
 
 class StockController {
-  async buyStock(req, res) {
+  async getStockInfo(req, res) {
     try {
-      const { symbol, quantity } = req.body
-      if (quantity <= 0) return res.status(400).json('Bad request')
-      const response = await stockExists(symbol)
-      if (!response) return res.status(400).json({ message: 'Stock not found' })
-      // Получаем данные из Alpha Vantage API
-      const name = response['2. name']
-      const marketOpen = response['5. marketOpen']
-      const marketClose = response['6. marketClose']
-      const timezone = response['7. timezone']
-      const currency = response['8. currency']
-
-      // Записываем данные в модель акции
-
-      let stock = new Stock({
-        symbol,
-        name,
-        marketOpen,
-        marketClose,
-        timezone,
-        currency,
-        user: req.user.id,
-        quantity,
-      })
-
-      if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
-      // Пользователь, отправивший запрос
-      let user = await User.findOne({ _id: req.user.id })
-      const price = await stockService.getPrice(stock.symbol)
-      if (!price) return res.status(400).json({ message: price })
-      stock = await stockService.buyStock(user, price * quantity, stock)
-      if (!stock.symbol) return res.status(400).json({ message: stock })
-      stock.price = price
-      const transaction = new Transaction({
-        type: 'Куплено',
-        symbol: stock.symbol,
-        price: price,
-        date: Date(),
-        quantity: quantity,
-        currency: stock.currency,
-        user: user.id,
-      })
-      user.transactions.push(transaction.id)
-      await stock.save()
-      await user.save()
-      await transaction.save()
+      const { symbol, from, till } = req.query
+      const stock = await stockService.getStockInfo(symbol, from, till)
       return res.json({
         stock,
-        user: {
-          id: user.id,
-          email: user.email,
-          balanceRUB: user.balanceRUB,
-          balanceUSD: user.balanceUSD,
-          stocks: user.stocks,
-        },
-        price,
+        message: 'Данные успешно получены',
+      })
+    } catch (e) {
+      return res.status(500).json(e)
+    }
+  }
+
+  async findStock(req, res) {
+    try {
+      const { q } = req.query
+      const stock = await stockService.findStock(q)
+      return res.json({
+        stock,
+        message: 'Данные успешно получены',
+      })
+    } catch (e) {
+      return res.status(500).json(e)
+    }
+  }
+
+  async buyStock(req, res) {
+    try {
+      const { symbol, amount } = req.body
+      const currentUser = req.user
+      const { stock, user, transaction } = await stockService.buyStock(symbol, amount, currentUser)
+      return res.json({
+        // stock,
+        // user,
+        // transaction,
         message: 'Сделка прошла успешно',
       })
     } catch (e) {
       console.log(e)
-      return res.json(e.message)
+      return res.status(400).json(e)
     }
   }
 
@@ -85,9 +60,9 @@ class StockController {
   //     const marketClose = request['6. marketClose']
   //     const timezone = request['7. timezone']
   //     const currency = request['8. currency']
-  //     const quantity = Number(request['quantity'])
+  //     const amount = Number(request['amount'])
 
-  //     if (quantity <= 0) return res.status(400).json('Bad request')
+  //     if (amount <= 0) return res.status(400).json('Bad request')
   //     // Записываем данные в модель акции
   //     let stock = new Stock({
   //       symbol,
@@ -99,7 +74,7 @@ class StockController {
   //       timezone,
   //       currency,
   //       user: req.user.id,
-  //       quantity,
+  //       amount,
   //     })
 
   //     if (!(await stockExists(stock.symbol))) return res.status(400).json({ message: 'Stock not found' })
@@ -108,7 +83,7 @@ class StockController {
   //     // Пользователь, отправивший запрос
   //     let user = await User.findOne({ _id: req.user.id })
   //     const price = await stockService.getPrice(stock.symbol)
-  //     stock = await stockService.buyStock(user, price * quantity, stock)
+  //     stock = await stockService.buyStock(user, price * amount, stock)
   //     await stock.save()
   //     await user.save()
   //     return res.json({
@@ -127,7 +102,7 @@ class StockController {
   //   }
   // }
 
-  async getStocks(req, res) {
+  async getUserStocks(req, res) {
     try {
       if (!req.query.symbol) return res.json('Search query is empty')
       const symbol = req.query.symbol
@@ -140,11 +115,6 @@ class StockController {
     }
   }
 
-  async getUserStocks() {
-    // const stocks = await Stock.find({ user: req.user.id })
-    // return res.json(stocks)
-  }
-
   async sellStock(req, res) {
     try {
       let stock = await Stock.findOne({ _id: req.query.id, user: req.user.id })
@@ -152,25 +122,26 @@ class StockController {
       if (!stock) {
         return res.status(400).json({ message: 'Stock not found' })
       }
-      let quantity = req.query.quantity
-      quantity = Number(quantity)
-      if (quantity <= 0) return res.status(400).json('Quantity must be positive')
-      if (quantity > stock.quantity) return res.status(400).json('Not enough stocks')
+      let amount = req.query.amount
+      amount = Number(amount)
+      if (amount <= 0) return res.status(400).json('Amount must be positive')
+      if (amount > stock.amount) return res.status(400).json('Not enough stocks')
 
       const price = await stockService.getPrice(stock.symbol)
 
-      stock = stockService.sellStock(user, stock, price, quantity)
+      stock = stockService.sellStock(user, stock, price, amount)
       const transaction = new Transaction({
         type: 'Продано',
         symbol: stock.symbol,
         price: price,
         date: Date(),
-        quantity: quantity,
+        amount: amount,
         currency: stock.currency,
+        cost: price * amount,
         user: user.id,
       })
       user.transactions.push(transaction.id)
-      if (!stock.quantity) {
+      if (!stock.amount) {
         await stock.remove()
         await user.save()
       } else {
@@ -196,4 +167,4 @@ class StockController {
   }
 }
 
-module.exports = new StockController()
+export default new StockController()

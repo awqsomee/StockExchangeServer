@@ -19,7 +19,7 @@ class authController {
         return res.status(400).json({ message: 'Incorrect request', errors })
       }
 
-      const { email, password, name, surname } = req.body
+      const { email, password, name } = req.body
       const lowerCaseEmail = email.toLowerCase()
       const candidate = await User.findOne({ email: lowerCaseEmail })
       if (candidate) {
@@ -28,13 +28,15 @@ class authController {
         })
       }
       const hashPassword = await bcrypt.hash(password, 8)
-      const user = await User.create({ email: lowerCaseEmail, password: hashPassword, name, surname })
+      const user = await User.create({ email: lowerCaseEmail, username: lowerCaseEmail, password: hashPassword, name })
       const token = generateAccessToken(user.id)
       return res.json({
         token,
         user: {
           id: user.id,
+          username: user.username,
           name: user.name,
+          email: user.email,
           balance: user.balance,
           avatar: user.avatar,
         },
@@ -53,10 +55,11 @@ class authController {
       }
 
       const { email, password } = req.body
-      const lowerCaseEmail = email.toLowerCase()
-      const user = await User.findOne({ email: lowerCaseEmail })
+      const lowerCaseUsername = email.toLowerCase()
+      let user = await User.findOne({ email: lowerCaseUsername })
       if (!user) {
-        return res.status(404).json({ message: 'User not found' })
+        user = await User.findOne({ username: lowerCaseUsername })
+        if (!user) return res.status(404).json({ message: 'User not found' })
       }
       const isPassValid = bcrypt.compareSync(password, user.password)
       if (!isPassValid) {
@@ -67,7 +70,9 @@ class authController {
         token,
         user: {
           id: user.id,
+          username: user.username,
           name: user.name,
+          email: user.email,
           balance: user.balance,
           avatar: user.avatar,
         },
@@ -85,7 +90,9 @@ class authController {
         token,
         user: {
           id: user.id,
+          username: user.username,
           name: user.name,
+          email: user.email,
           balance: user.balance,
           avatar: user.avatar,
         },

@@ -2,10 +2,11 @@ import pkg from 'mongoose'
 const { Schema, model, ObjectId } = pkg
 
 const Currency = new Schema({
-  symbol: { type: String, required: true, unique: true },
+  symbol: { type: String, required: true },
   name: { type: String, required: true },
   user: { type: ObjectId, ref: 'User' },
-  quantity: { type: Number, default: 0 },
+  amount: { type: Number, default: 0 },
+  latestPrice: { type: Number, required: true },
 })
 
-module.exports = model('Currency', Currency)
+export default model('Currency', Currency)

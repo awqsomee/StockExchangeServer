@@ -3,11 +3,11 @@ const { Schema, model, ObjectId } = pkg
 
 const User = new Schema({
   email: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 
   avatar: { type: String, default: null },
   name: { type: String, required: true },
-  surname: { type: String },
   birthday: { type: Date, default: null },
 
   phoneNumber: { type: String, default: null },
@@ -17,6 +17,7 @@ const User = new Schema({
   balance: { type: Number, default: 0 },
 
   stocks: [{ type: ObjectId, ref: 'Stock' }],
+  currencies: [{ type: ObjectId, ref: 'Currency' }],
   transactions: [{ type: ObjectId, ref: 'Transactions' }],
 })
 

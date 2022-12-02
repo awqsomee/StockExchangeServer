@@ -1,9 +1,9 @@
-const Router = require('express')
-const authMiddleware = require('../middleware/auth.middleware')
-const transactionController = require('../controllers/transactionController')
+import { Router } from 'express'
+import authMiddleware from '../middleware/authMiddleware.js'
+import transactionController from '../controllers/transactionController.js'
 
 const router = new Router()
 
 router.get('', authMiddleware, transactionController.showTransactions)
 
-module.exports = router
+export default router

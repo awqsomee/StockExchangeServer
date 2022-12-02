@@ -1,14 +1,16 @@
 import User from '../models/User.js'
 import Transaction from '../models/Transaction.js'
+import doTransaction from '../utils/doTransaction.js'
 
 class balanceService {
   async changeBalance(currentUser, value) {
     let user = await User.findOne({ _id: currentUser.id })
-    if (!(typeof value === 'number')) throw 'Value must be a number'
+    if (!(typeof value === 'number')) throw { message: 'Value must be a number' }
+    if (value === 0) throw { message: 'Bad request' }
     let transaction
     if (value > 0)
       transaction = new Transaction({
-        type: 'REPLENISHMENT',
+        type: 'Пополнение баланса',
         price: value,
         date: Date(),
         currency: 'RUB',
@@ -16,41 +18,23 @@ class balanceService {
       })
     if (value < 0)
       transaction = new Transaction({
-        type: 'WITHDRAWAL',
+        type: 'Вывод средств',
         price: value,
         date: Date(),
         currency: 'RUB',
         user: user.id,
       })
-    user.balance = this.doTransaction(user.balance, value)
+    user.balance = doTransaction(user.balance, value)
     user.transactions.push(transaction.id)
     await user.save()
     await transaction.save()
     return {
       id: user.id,
+      username: user.username,
       name: user.name,
       balance: user.balance,
+      transaction,
     }
-  }
-  // currencySwitch(user, cost, currency) {
-  //   switch (currency) {
-  //     case 'RUB': {
-  //       user.balanceRUB = this.transaction(user.balanceRUB, cost)
-  //       return user
-  //     }
-  //     case 'USD': {
-  //       user.balanceUSD = this.transaction(user.balanceUSD, cost)
-  //       return user
-  //     }
-  //     default:
-  //       throw 'Currency Error'
-  //   }
-  // }
-  doTransaction(balance, amount) {
-    if (balance >= -amount || amount > 0) {
-      balance += amount
-    } else throw 'Not enough money'
-    return balance
   }
 }
 
