@@ -10,7 +10,7 @@ const router = new Router()
 router.use('/api/auth', authRouter)
 router.use('/api/auth/balance', balanceRouter)
 router.use('/api/forex', forexRouter)
-router.use('/api/stock', stockRouter)
+router.use('/api/stocks', stockRouter)
 router.use('/api/auth/transactions', transactionRouter)
 router.use('/api/auth/user', userRouter)
 
