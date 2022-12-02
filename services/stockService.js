@@ -3,64 +3,79 @@ import config from 'config'
 import Stock from '../models/Stock.js'
 import balanceService from './balanceService.js'
 import User from '../models/User.js'
+import Transaction from '../models/Transaction.js'
+import doTransaction from '../utils/doTransaction.js'
 
 class StockService {
-  async buyStock(symbol, amount, currentUser) {
-    if (amount <= 0) throw { message: 'Bad request' }
+  async exchangeStock(symbol, amount, currentUser) {
+    if (!symbol || !amount) throw { message: 'Bad request' }
+    if (amount == 0) throw { message: 'Bad request' }
     let user = await User.findOne({ _id: currentUser.id })
     const stockInfo = await this.getStockInfo(symbol)
-    let stock = new Stock({
-      symbol,
-      name: stockInfo.name,
-      currency: stockInfo.faceunit,
-      user: currentUser,
-      amount,
+    const price = stockInfo.prices[0].close
+    if (!price) throw { message: 'Акция не продается' }
+    let stock = await Stock.findOne({ user: currentUser.id, symbol })
+    if (!stock?.symbol) {
+      if (amount < 0) throw { message: 'У вас нет такого количества акций' }
+      stock = new Stock({
+        symbol,
+        name: stockInfo.name,
+        currency: stockInfo.currency,
+        latestPrice: stockInfo.prices[0].close,
+        user: user.id,
+        amount,
+      })
+      user.stocks.push(stock.id)
+    } else {
+      if (amount < 0 && stock.amount < -amount) throw { message: 'У вас нет такого количества акций' }
+      stock.amount += amount
+    }
+    const transaction = new Transaction({
+      type: 'Обмен акций',
+      symbol: stock.symbol,
+      price: price,
+      date: Date(),
+      amount: amount,
+      currency: stock.currency,
+      cost: price * amount,
+      user: user.id,
     })
-    return stock
-    // // if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
-    // const price = await this.getPrice(symbol)
-    // if (!price) return res.status(400).json({ message: price })
-    // // stock = await stockService.buyStock(user, price * amount, stock)
-    // if (!stock.symbol) return res.status(400).json({ message: stock })
-    // stock.price = price
-    // const transaction = new Transaction({
-    //   type: 'Куплено',
-    //   symbol: stock.symbol,
-    //   price: price,
-    //   date: Date(),
-    //   amount: amount,
-    //   currency: stock.currency,
-    //   cost: price * amount,
-    //   user: user.id,
-    // })
-    // user.transactions.push(transaction.id)
-    // await stock.save()
-    // await user.save()
-    // await transaction.save()
 
-    // if (cost > 0) {
-    //   user = balanceService.currencySwitch(user, -cost, stock.currency)
-    //   user.stocks.push(stock.id)
-    //   if (!user.id) throw user
-    //   // Уже купленные акции
-    //   const purchasedStock = await Stock.findOne({ symbol: stock.symbol, user: user.id })
-    //   if (purchasedStock) {
-    //     purchasedStock.amount += stock.amount
-    //     stock = purchasedStock
-    //   }
-    // return stock
-    // } else throw {message: 'Bad request'}
+    if (stock.currency != 'RUB') throw { message: 'Покупка и продажа акций в валюте находится в разработке' }
+    user.balance = doTransaction(user.balance, -transaction.cost)
+    user.transactions.push(transaction.id)
+    await stock.save()
+    await user.save()
+    await transaction.save()
+
+    if (stock.amount === 0) {
+      user.stocks.pop(stock.id)
+      await Stock.deleteOne({ _id: stock.id })
+      await user.save()
+    }
+
+    return {
+      stock,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        balance: user.balance,
+        stocks: user.stocks,
+      },
+      transaction,
+    }
   }
 
-  sellStock(user, stock, price, amount) {
-    // if (compareTime(stock)) {
-    user = balanceService.currencySwitch(user, price * amount, stock.currency)
-    stock.amount -= amount
-    return stock
-    // } else {
-    //   throw 'Stock exchange is closed'
-    // }
-  }
+  // sellStock(user, stock, price, amount) {
+  //   // if (compareTime(stock)) {
+  //   user = balanceService.currencySwitch(user, price * amount, stock.currency)
+  //   stock.amount -= amount
+  //   return stock
+  //   // } else {
+  //   //   throw 'Stock exchange is closed'
+  //   // }
+  // }
 
   async getPrice(symbol) {
     try {

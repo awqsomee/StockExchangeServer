@@ -31,19 +31,18 @@ class StockController {
     }
   }
 
-  async buyStock(req, res) {
+  async exchangeStock(req, res) {
     try {
       const { symbol, amount } = req.body
       const currentUser = req.user
-      const { stock, user, transaction } = await stockService.buyStock(symbol, amount, currentUser)
+      const { stock, user, transaction } = await stockService.exchangeStock(symbol, amount, currentUser)
       return res.json({
-        // stock,
-        // user,
-        // transaction,
+        stock,
+        user,
+        transaction,
         message: 'Сделка прошла успешно',
       })
     } catch (e) {
-      console.log(e)
       return res.status(400).json(e)
     }
   }

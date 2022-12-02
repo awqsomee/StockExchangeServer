@@ -2,7 +2,7 @@ import pkg from 'mongoose'
 const { Schema, model, ObjectId } = pkg
 
 const Stock = new Schema({
-  symbol: { type: String, required: true, unique: true },
+  symbol: { type: String, required: true },
   name: { type: String, required: true },
   currency: { type: String, required: true },
   latestPrice: { type: Number, required: true },

@@ -7,8 +7,7 @@ const router = new Router()
 // TODO: Cash data
 router.get('', stockController.getStockInfo)
 router.get('/search', stockController.findStock)
-router.post('/auth', authMiddleware, stockController.buyStock)
+router.post('/auth', authMiddleware, stockController.exchangeStock)
 router.get('/auth', authMiddleware, stockController.getUserStocks)
-router.delete('/auth/', authMiddleware, stockController.sellStock)
 
 export default router
