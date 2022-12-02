@@ -1,0 +1,9 @@
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: 18
+
+run:
+  scriptName: index.js
+  containerPort: 3000
