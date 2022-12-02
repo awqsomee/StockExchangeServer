@@ -84,9 +84,6 @@ class StockService {
         const board = response.data.boards.data[0][1]
         const currency = response.data.boards.data[0][15]
         let pricesData
-        console.log(
-          `https://iss.moex.com/iss/history/engines/${engine}/markets/${market}/sessions/total/boards/${board}/securities/${symbol}.json?sort_order=desc`
-        )
         if (from && !till) {
           pricesData = await axios.get(
             `https://iss.moex.com/iss/history/engines/${engine}/markets/${market}/sessions/total/boards/${board}/securities/${symbol}.json?sort_order=desc&from=${from}`
@@ -118,17 +115,17 @@ class StockService {
           name: data[1][2],
           shortname: data[2][2],
           isin: data[3][2],
-          issuesize: data[4][2],
-          facevalue: data[5][2],
-          faceunit: data[6][2],
-          issuedate: data[7][2],
-          latname: data[8][2],
-          isqualifiedinvestors: data[9][2],
-          typename: data[10][2],
-          group: data[11][2],
-          type: data[12][2],
-          groupname: data[13][2],
-          emitterId: data[14][2],
+          issuesize: data[5][2],
+          facevalue: data[6][2],
+          faceunit: data[7][2],
+          issuedate: data[8][2],
+          latname: data[9][2],
+          isqualifiedinvestors: data[10][2],
+          typename: data[11][2],
+          group: data[12][2],
+          type: data[13][2],
+          groupname: data[14][2],
+          emitterId: data[15][2],
           engine,
           market,
           board,
@@ -137,12 +134,12 @@ class StockService {
         }
       }
     } else {
-      throw { message: 'Stock not found' }
+      throw { message: 'Акций не найдено' }
     }
   }
 
   async findStock(query) {
-    if (!query) throw { message: 'Bad request' }
+    if (!query) throw { message: 'Поле поиска пустое' }
     const response = await axios.get(`https://iss.moex.com/iss/securities.json?q=${query}`)
     const data = response.data.securities.data
     if (Object.keys(data).length != 0) {
@@ -160,7 +157,7 @@ class StockService {
       result = result.filter((value) => value != null)
       if (result != null) return result
     } else {
-      throw { message: 'Stock not found' }
+      throw { message: 'Акции не найдены' }
     }
   }
 }
