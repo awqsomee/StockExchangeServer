@@ -85,7 +85,7 @@ class StockService {
         const currency = response.data.boards.data[0][15]
         let pricesData
         console.log(
-          `https://iss.moex.com/iss/history/engines/${engine}/markets/${market}/sessions/total/boards/${board}/securities/${symbol}.json?sort_order=desc&from=${from}&till=${till}`
+          `https://iss.moex.com/iss/history/engines/${engine}/markets/${market}/sessions/total/boards/${board}/securities/${symbol}.json?sort_order=desc`
         )
         if (from && !till) {
           pricesData = await axios.get(
@@ -104,6 +104,7 @@ class StockService {
             `https://iss.moex.com/iss/history/engines/${engine}/markets/${market}/sessions/total/boards/${board}/securities/${symbol}.json?sort_order=desc`
           )
         }
+        console.log(symbol)
         const prices = pricesData.data.history.data.map((stroke) => {
           return {
             date: stroke[1],
@@ -113,6 +114,7 @@ class StockService {
             high: stroke[8],
           }
         })
+        console.log(symbol, prices[0])
         return {
           secid: data[0][2],
           name: data[1][2],
@@ -146,21 +148,17 @@ class StockService {
     const response = await axios.get(`https://iss.moex.com/iss/securities.json?q=${query}`)
     const data = response.data.securities.data
     if (Object.keys(data).length != 0) {
-      let result = Object.values(data).map((stroke) => {
-        if (stroke[5]) {
-          return {
-            secid: stroke[1],
-            shortname: stroke[2],
-            name: stroke[4],
-            isin: stroke[5],
-            is_traded: stroke[6],
-            emitent_title: stroke[8],
-            type: stroke[11],
-            group: stroke[12],
-            primary_boardid: stroke[13],
+      let result = await Promise.all(
+        Object.values(data).map(async (stroke) => {
+          const boardid = stroke[14]
+          const symbol = stroke[1]
+          if (boardid == 'TQBR' || boardid == 'FQBR') {
+            const stock = await this.getStockInfo(symbol)
+            stock.isTraded = stroke[6]
+            return stock
           }
-        }
-      })
+        })
+      )
       result = result.filter((value) => value != null)
       if (result != null) return result
     } else {
