@@ -25,7 +25,7 @@ class forexService {
     let user = await User.findOne({ _id: currentUser.id })
 
     let currency = await Currency.findOne({ user: currentUser.id, symbol })
-    if (currency?.id) throw { message: 'Account already opened' }
+    if (currency?.id) throw { message: 'Счет уже открыт' }
 
     const currencyInfo = await this.getCurrencyInfo(symbol)
     currency = new Currency({
@@ -57,7 +57,7 @@ class forexService {
     let user = await User.findOne({ _id: currentUser.id })
 
     let currency = await Currency.findOne({ user: currentUser.id, symbol })
-    if (!currency?.id) throw { message: 'Account already closed' }
+    if (!currency?.id) throw { message: 'Счет уже закрыт' }
     let transactionExchange
     if (currency.amount > 0) {
       const exchangeResult = await this.exchange(user, symbol, currency.amount * -1)

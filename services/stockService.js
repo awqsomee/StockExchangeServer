@@ -1,10 +1,9 @@
 import axios from 'axios'
-import config from 'config'
 import Stock from '../models/Stock.js'
-import balanceService from './balanceService.js'
 import User from '../models/User.js'
 import Transaction from '../models/Transaction.js'
 import doTransaction from '../utils/doTransaction.js'
+import url from 'url'
 
 class StockService {
   async exchangeStock(symbol, amount, currentUser) {
@@ -67,30 +66,11 @@ class StockService {
     }
   }
 
-  // sellStock(user, stock, price, amount) {
-  //   // if (compareTime(stock)) {
-  //   user = balanceService.currencySwitch(user, price * amount, stock.currency)
-  //   stock.amount -= amount
-  //   return stock
-  //   // } else {
-  //   //   throw 'Stock exchange is closed'
-  //   // }
-  // }
-
-  async getPrice(symbol) {
-    try {
-      const response = await axios.get(`${config.get('finnhub.quote')}${symbol}&token=${config.get('finnhub.APIKey')}`)
-      if (!response.data.c) throw 'Stock Price Error'
-      const currentPrice = response.data.c
-      return currentPrice
-    } catch (e) {
-      throw e
-    }
-  }
-
   async getStockInfo(symbol, from, till) {
     if (!symbol) throw { message: 'Bad request' }
-    const response = await axios.get(`https://iss.moex.com/iss/securities/${symbol}.json`)
+    const URI = `https://iss.moex.com/iss/securities/${symbol}.json`
+    const encodedURI = encodeURI(URI)
+    const response = await axios.get(encodedURI)
     const data = response.data.description.data
     if (Object.keys(data).length != 0) {
       if (response.data.description.data[0][2] === symbol) {
@@ -125,6 +105,7 @@ class StockService {
             high: stroke[8],
           }
         })
+
         return {
           secid: data[0][2],
           name: data[1][2],
@@ -155,7 +136,9 @@ class StockService {
 
   async findStock(query) {
     if (!query) throw { message: 'Поле поиска пустое' }
-    const response = await axios.get(`https://iss.moex.com/iss/securities.json?q=${query}`)
+    const URI = `https://iss.moex.com/iss/securities.json?q=${query}`
+    const encodedURI = encodeURI(URI)
+    const response = await axios.get(encodedURI)
     const data = response.data.securities.data
     if (Object.keys(data).length != 0) {
       let result = await Promise.all(
@@ -175,6 +158,18 @@ class StockService {
     } else {
       throw { message: 'Акции не найдены' }
     }
+  }
+
+  async getUserStocks(currentUser) {
+    let stocks = await Stock.find({ user: currentUser.id })
+    stocks = await Promise.all(
+      stocks.map(async (stock) => {
+        const share = await this.getStockInfo(stock.symbol)
+        stock.price = share.price
+        return stock
+      })
+    )
+    return stocks
   }
 }
 
