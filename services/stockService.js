@@ -16,6 +16,7 @@ class StockService {
       user: currentUser,
       amount,
     })
+    return stock
     // // if (!compareTime(stock)) return res.status(400).json({ message: 'Stock exchange closed' })
     // const price = await this.getPrice(symbol)
     // if (!price) return res.status(400).json({ message: price })
