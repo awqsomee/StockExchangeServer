@@ -104,7 +104,6 @@ class StockService {
             `https://iss.moex.com/iss/history/engines/${engine}/markets/${market}/sessions/total/boards/${board}/securities/${symbol}.json?sort_order=desc`
           )
         }
-        console.log(symbol)
         const prices = pricesData.data.history.data.map((stroke) => {
           return {
             date: stroke[1],
@@ -114,7 +113,6 @@ class StockService {
             high: stroke[8],
           }
         })
-        console.log(symbol, prices[0])
         return {
           secid: data[0][2],
           name: data[1][2],
