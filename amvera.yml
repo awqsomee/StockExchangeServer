@@ -4,6 +4,9 @@ meta:
     name: npm
     version: 18
 
+build:
+  additionalCommands: npm run build
+
 run:
-  scriptName: index.js
+  command: npm run start
   containerPort: 3000
