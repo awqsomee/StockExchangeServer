@@ -4,9 +4,6 @@ meta:
     name: npm
     version: 18
 
-build:
-  dockerfile: Dockerfile
-  additionalCommands: npm run build
-
 run:
   scriptName: index.js
+  containerPort: 3000
