@@ -9,4 +9,3 @@ build:
 
 run:
   scriptName: index.js
-  containerPort: 3000
