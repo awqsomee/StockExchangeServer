@@ -11,7 +11,7 @@ class balanceService {
     if (value > 0)
       transaction = new Transaction({
         type: 'Пополнение баланса',
-        price: value,
+        cost: value,
         date: Date(),
         currency: 'RUB',
         user: user.id,
@@ -19,7 +19,7 @@ class balanceService {
     if (value < 0)
       transaction = new Transaction({
         type: 'Вывод средств',
-        price: value,
+        cost: value,
         date: Date(),
         currency: 'RUB',
         user: user.id,
