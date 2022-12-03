@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import mongoose from 'mongoose'
 import config from 'config'
 import corsMiddleware from './middleware/corsMiddleware.js'
@@ -12,8 +13,8 @@ const app = express()
 const PORT = process.env.PORT || config.get('serverPort')
 const DB_URL = config.get('dbUrl')
 
+app.use(cors())
 app.use(fileUpload({}))
-app.use(corsMiddleware)
 app.use(filepathMiddleware(path.join(process.cwd(), 'static')))
 app.use(express.json())
 app.use(express.static(path.join(process.cwd(), 'static')))
