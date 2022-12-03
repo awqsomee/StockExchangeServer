@@ -165,8 +165,15 @@ class StockService {
     stocks = await Promise.all(
       stocks.map(async (stock) => {
         const share = await this.getStockInfo(stock.symbol)
-        stock.price = share.price
-        return stock
+        return {
+          id: stock.id,
+          symbol: stock.symbol,
+          name: stock.name,
+          currency: stock.currency,
+          latestPrice: stock.latestPrice,
+          amount: stock.amount,
+          prices: share.prices,
+        }
       })
     )
     return stocks
