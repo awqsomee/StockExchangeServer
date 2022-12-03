@@ -107,7 +107,7 @@ class StockService {
         })
 
         return {
-          secid: data[0][2],
+          symbol: data[0][2],
           name: data[1][2],
           shortname: data[2][2],
           isin: data[3][2],
