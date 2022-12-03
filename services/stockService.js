@@ -54,7 +54,15 @@ class StockService {
     }
 
     return {
-      stock,
+      stock: {
+        id: stock.id,
+        symbol: stock.symbol,
+        name: stock.name,
+        currency: stock.currency,
+        latestPrice: stock.latestPrice,
+        amount: stock.amount,
+        prices: stockInfo.prices,
+      },
       user: {
         id: user.id,
         username: user.username,
