@@ -94,7 +94,7 @@ class forexService {
 
   async getCurrencyInfo(symbol) {
     const response = await axios.get(`https://www.cbr-xml-daily.ru/daily_json.js`)
-    if (!response.data.Valute[symbol]) throw { message: 'Currency have not been found' }
+    if (!response.data.Valute[symbol]) throw { message: 'Валюта не найдена' }
 
     return response.data.Valute[symbol]
   }
@@ -142,16 +142,16 @@ class forexService {
   }
 
   async exchange(user, symbol, amount) {
-    if (!(typeof amount === 'number')) throw { message: 'Amount must be a number' }
-    if (amount === 0) throw { message: 'Bad request' }
+    if (!(typeof amount === 'number')) throw { message: 'Количество должно быть числом' }
+    if (amount === 0) throw { message: 'Некорректный запрос' }
     amount = Math.floor(amount)
 
     const currencyInfo = await this.getCurrencyInfo(symbol)
     let currency = await Currency.findOne({ user: user._id, symbol })
-    if (!currency?.id) throw { message: 'You must open account first' }
+    if (!currency?.id) throw { message: 'Вам нужно сначала открыть аккаунт' }
 
     currency.amount += amount
-    if (currency.amount < 0) throw { message: 'Not enough currency' }
+    if (currency.amount < 0) throw { message: 'Недостаточно средств' }
 
     currency.latestPrice = currencyInfo.Value / currencyInfo.Nominal
 

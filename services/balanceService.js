@@ -5,8 +5,8 @@ import doTransaction from '../utils/doTransaction.js'
 class balanceService {
   async changeBalance(currentUser, value) {
     let user = await User.findOne({ _id: currentUser.id })
-    if (!(typeof value === 'number')) throw { message: 'Value must be a number' }
-    if (value === 0) throw { message: 'Bad request' }
+    if (!(typeof value === 'number')) throw { message: 'Значение должно быть числом' }
+    if (value === 0) throw { message: 'Некорректный запрос' }
     let transaction
     if (value > 0)
       transaction = new Transaction({

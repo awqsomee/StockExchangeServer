@@ -7,8 +7,8 @@ import url from 'url'
 
 class StockService {
   async exchangeStock(symbol, amount, currentUser) {
-    if (!symbol || !amount) throw { message: 'Bad request' }
-    if (amount == 0) throw { message: 'Bad request' }
+    if (!symbol || !amount) throw { message: 'Некорректный запрос' }
+    if (amount == 0) throw { message: 'Некорректный запрос' }
     let user = await User.findOne({ _id: currentUser.id })
     const stockInfo = await this.getStockInfo(symbol)
     const price = stockInfo.prices[0].close
@@ -75,7 +75,7 @@ class StockService {
   }
 
   async getStockInfo(symbol, from, till) {
-    if (!symbol) throw { message: 'Bad request' }
+    if (!symbol) throw { message: 'Некорректный запрос' }
     const URI = `https://iss.moex.com/iss/securities/${symbol}.json`
     const encodedURI = encodeURI(URI)
     const response = await axios.get(encodedURI)

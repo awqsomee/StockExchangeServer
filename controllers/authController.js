@@ -16,7 +16,7 @@ class authController {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: 'Incorrect request', errors })
+        return res.status(400).json({ message: 'Некорректный запрос', errors })
       }
 
       const { email, password, name } = req.body
@@ -24,7 +24,7 @@ class authController {
       const candidate = await User.findOne({ email: lowerCaseEmail })
       if (candidate) {
         return res.status(400).json({
-          message: `User with email ${email} already exists`,
+          message: `Пользователь с почтой ${email} уже существует`,
         })
       }
       const hashPassword = await bcrypt.hash(password, 8)
@@ -40,7 +40,7 @@ class authController {
           balance: user.balance,
           avatar: user.avatar,
         },
-        message: 'User was created',
+        message: 'Пользователь был успешно создан',
       })
     } catch (e) {
       return res.status(500).json(e)
@@ -51,7 +51,7 @@ class authController {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: 'Incorrect request', errors })
+        return res.status(400).json({ message: 'Некорректный запрос', errors })
       }
 
       const { email, password } = req.body
@@ -59,11 +59,11 @@ class authController {
       let user = await User.findOne({ email: lowerCaseUsername })
       if (!user) {
         user = await User.findOne({ username: lowerCaseUsername })
-        if (!user) return res.status(404).json({ message: 'User not found' })
+        if (!user) return res.status(404).json({ message: 'Пользователь не найден' })
       }
       const isPassValid = bcrypt.compareSync(password, user.password)
       if (!isPassValid) {
-        return res.status(400).json({ message: 'Invalid password' })
+        return res.status(400).json({ message: 'Неверный пароль' })
       }
       const token = generateAccessToken(user.id)
       return res.json({
@@ -76,7 +76,7 @@ class authController {
           balance: user.balance,
           avatar: user.avatar,
         },
-        message: 'Login confirmed',
+        message: 'Вход выполнен успешно',
       })
     } catch (e) {
       return res.status(500).json(e)
@@ -96,7 +96,7 @@ class authController {
           balance: user.balance,
           avatar: user.avatar,
         },
-        message: 'Authentification completed',
+        message: 'Аутентификация пройдена',
       })
     } catch (e) {
       console.log(e)
