@@ -6,4 +6,4 @@ meta:
 
 run:
   command: npm run start
-  containerPort: 80
+  containerPort: 3000
