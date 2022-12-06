@@ -15,9 +15,9 @@ const DB_URL = config.get('dbUrl')
 
 app.use(cors())
 app.use(fileUpload({}))
-app.use(filepathMiddleware(path.join(process.cwd(), 'static')))
+app.use(filepathMiddleware(path.join(process.cwd(), 'data')))
 app.use(express.json())
-app.use(express.static(path.join(process.cwd(), 'static')))
+app.use(express.static(path.join(process.cwd(), 'data')))
 app.use(router)
 
 const start = async () => {
@@ -25,7 +25,7 @@ const start = async () => {
     await mongoose.connect(DB_URL, { useUnifiedTopology: true, useNewUrlParser: true })
     app.listen(PORT, () => {
       console.log('Server started on port ', PORT)
-      if (!fs.existsSync(path.join(process.cwd(), 'static'))) fs.mkdirSync(path.join(process.cwd(), 'static'))
+      if (!fs.existsSync(path.join(process.cwd(), 'data'))) fs.mkdirSync(path.join(process.cwd(), 'data'))
     })
   } catch (e) {
     console.log(e)
