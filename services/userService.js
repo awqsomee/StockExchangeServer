@@ -26,7 +26,7 @@ class UserService {
       var candidate = await User.findOne({ email: newUserInfo.email })
       if (candidate?.email) throw { message: `Email ${candidate.email} уже используется` }
     }
-    const validKeys = ['email', 'avatar', 'username', 'name', 'birthday', 'phoneNumber', 'passportNumber']
+    const validKeys = ['email', 'username', 'name', 'birthday', 'phoneNumber', 'passportNumber']
     Object.keys(newUserInfo).forEach((key) => validKeys.includes(key) || delete newUserInfo[key])
     user = await User.findOneAndUpdate({ _id: currentUser.id }, newUserInfo, {
       returnOriginal: false,
