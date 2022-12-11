@@ -38,6 +38,7 @@ class forexService {
 
     const transaction = new Transaction({
       type: 'Открытие счета',
+      currency: currency.id,
       symbol: currency.symbol,
       date: Date(),
       user: user.id,
@@ -68,6 +69,7 @@ class forexService {
 
     const transactionClose = new Transaction({
       type: 'Закрытие счета',
+      currency: currency.id,
       symbol: currency.symbol,
       date: Date(),
       user: user.id,
@@ -131,10 +133,7 @@ class forexService {
     let currencies = await Currency.find({ user: currentUser.id })
 
     return {
-      user: {id: user.id,
-        username: user.username,
-        name: user.name,
-        balance: user.balance,},
+      user: { id: user.id, username: user.username, name: user.name, balance: user.balance },
       transaction,
       currencies,
       currency,
@@ -159,6 +158,7 @@ class forexService {
     if (amount > 0) {
       transaction = new Transaction({
         type: 'Обмен валюты',
+        currency: currency.id,
         symbol: currency.symbol,
         price: currency.latestPrice,
         date: Date(),
@@ -171,6 +171,7 @@ class forexService {
     if (amount < 0)
       transaction = new Transaction({
         type: 'Обмен валюты',
+        currency: currency.id,
         symbol: currency.symbol,
         price: currency.latestPrice,
         date: Date(),
