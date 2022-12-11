@@ -55,8 +55,8 @@ class forexController {
     try {
       const currentUser = req.user
       const { symbol, amount } = req.body
-      const user = await forexService.exchangeCurrency(currentUser, symbol, amount)
-      return res.json({ user, message: 'Транзакция произведена' })
+      const {user, currency, currencies, transaction} = await forexService.exchangeCurrency(currentUser, symbol, amount)
+      return res.json({ user, currency, currencies, transaction, message: 'Транзакция произведена' })
     } catch (e) {
       return res.status(400).json(e)
     }

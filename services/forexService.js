@@ -131,13 +131,13 @@ class forexService {
     let currencies = await Currency.find({ user: currentUser.id })
 
     return {
-      id: user.id,
-      username: user.username,
-      name: user.name,
+      user: {id: user.id,
+        username: user.username,
+        name: user.name,
+        balance: user.balance,},
       transaction,
       currencies,
       currency,
-      balance: user.balance,
     }
   }
 
