@@ -21,10 +21,15 @@ class UserService {
   async changeUserInfo(currentUser, newUserInfo) {
     if (newUserInfo.email == null) throw { message: 'Email не может быть пустым' }
     if (newUserInfo.name == null) throw { message: 'Имя не может быть пустым' }
+    if (newUserInfo.username == null) throw { message: 'Username не может быть пустым' }
     let user = await User.findOne({ _id: currentUser.id })
     if (user.email != newUserInfo.email) {
       var candidate = await User.findOne({ email: newUserInfo.email })
       if (candidate?.email) throw { message: `Email ${candidate.email} уже используется` }
+    }
+    if (user.username != newUserInfo.username) {
+      var candidate = await User.findOne({ username: newUserInfo.username })
+      if (candidate?.username) throw { message: `Username ${candidate.username} уже используется` }
     }
     const validKeys = ['email', 'username', 'name', 'birthday', 'phoneNumber', 'passportNumber']
     Object.keys(newUserInfo).forEach((key) => validKeys.includes(key) || delete newUserInfo[key])
