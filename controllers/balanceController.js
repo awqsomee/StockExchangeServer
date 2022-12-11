@@ -5,8 +5,8 @@ class balanceController {
     try {
       const { value } = req.body
       const currentUser = req.user
-      const user = await balanceService.changeBalance(currentUser, value)
-      return res.json({ user, message: 'Транзакция произведена' })
+      const {user, transaction} = await balanceService.changeBalance(currentUser, value)
+      return res.json({ user, transaction, message: 'Транзакция произведена' })
     } catch (e) {
       return res.status(400).json(e)
     }
