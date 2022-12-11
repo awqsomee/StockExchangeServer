@@ -29,10 +29,10 @@ class balanceService {
     await user.save()
     await transaction.save()
     return {
-      id: user.id,
-      username: user.username,
-      name: user.name,
-      balance: user.balance,
+      user : {id: user.id,
+        username: user.username,
+        name: user.name,
+        balance: user.balance},
       transaction,
     }
   }
