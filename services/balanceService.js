@@ -7,6 +7,7 @@ class balanceService {
     let user = await User.findOne({ _id: currentUser.id })
     if (!(typeof value === 'number')) throw { message: 'Значение должно быть числом' }
     if (value === 0) throw { message: 'Некорректный запрос' }
+    user.balance = doTransaction(user.balance, value)
     let transaction
     if (value > 0)
       transaction = new Transaction({
@@ -14,6 +15,7 @@ class balanceService {
         cost: value,
         date: Date(),
         currency: 'RUB',
+        balance: user.balance,
         user: user.id,
       })
     if (value < 0)
@@ -22,17 +24,14 @@ class balanceService {
         cost: value,
         date: Date(),
         currency: 'RUB',
+        balance: user.balance,
         user: user.id,
       })
-    user.balance = doTransaction(user.balance, value)
     user.transactions.push(transaction.id)
     await user.save()
     await transaction.save()
     return {
-      user : {id: user.id,
-        username: user.username,
-        name: user.name,
-        balance: user.balance},
+      user: { id: user.id, username: user.username, name: user.name, balance: user.balance },
       transaction,
     }
   }

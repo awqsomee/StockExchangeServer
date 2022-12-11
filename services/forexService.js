@@ -153,6 +153,7 @@ class forexService {
     if (currency.amount < 0) throw { message: 'Недостаточно средств' }
 
     currency.latestPrice = currencyInfo.Value / currencyInfo.Nominal
+    user.balance = doTransaction(user.balance, (currencyInfo.Value * -amount) / currencyInfo.Nominal)
 
     let transaction
     if (amount > 0) {
@@ -165,6 +166,7 @@ class forexService {
         amount,
         currency: 'RUB',
         cost: currency.latestPrice * amount,
+        balance: user.balance,
         user: user.id,
       })
     }
@@ -178,10 +180,10 @@ class forexService {
         amount,
         currency: 'RUB',
         cost: currency.latestPrice * amount,
+        balance: user.balance,
         user: user.id,
       })
 
-    user.balance = doTransaction(user.balance, (currencyInfo.Value * -amount) / currencyInfo.Nominal)
     user.transactions.push(transaction.id)
 
     return { user, currency, transaction }

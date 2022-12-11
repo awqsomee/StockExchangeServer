@@ -29,6 +29,9 @@ class StockService {
       if (amount < 0 && stock.amount < -amount) throw { message: 'У вас нет такого количества акций' }
       stock.amount += amount
     }
+
+    if (stock.currency != 'RUB') throw { message: 'Покупка и продажа акций в валюте находится в разработке' }
+    user.balance = doTransaction(user.balance, -transaction.cost)
     const transaction = new Transaction({
       type: 'Обмен акций',
       symbol: stock.symbol,
@@ -37,11 +40,9 @@ class StockService {
       amount: amount,
       currency: stock.currency,
       cost: price * amount,
+      balance: user.balance,
       user: user.id,
     })
-
-    if (stock.currency != 'RUB') throw { message: 'Покупка и продажа акций в валюте находится в разработке' }
-    user.balance = doTransaction(user.balance, -transaction.cost)
     user.transactions.push(transaction.id)
     await stock.save()
     await user.save()

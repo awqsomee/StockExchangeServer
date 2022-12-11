@@ -12,6 +12,7 @@ const Transaction = new Schema({
   currency: { type: String },
   cost: { type: Number },
   user: { type: ObjectId, ref: 'User' },
+  balance: { type: Number },
 })
 
 export default model('Transaction', Transaction)

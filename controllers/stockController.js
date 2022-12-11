@@ -11,6 +11,7 @@ class StockController {
         message: 'Данные успешно получены',
       })
     } catch (e) {
+      console.log(e)
       return res.status(500).json(e)
     }
   }
@@ -24,6 +25,7 @@ class StockController {
         message: 'Данные успешно получены',
       })
     } catch (e) {
+      console.log(e)
       return res.status(500).json(e)
     }
   }
@@ -40,6 +42,7 @@ class StockController {
         message: 'Сделка прошла успешно',
       })
     } catch (e) {
+      console.log(e)
       return res.status(500).json(e)
     }
   }
@@ -53,6 +56,7 @@ class StockController {
         message: 'Акции пользователя успешно получены',
       })
     } catch (e) {
+      console.log(e)
       return res.status(500).json(e)
     }
   }
