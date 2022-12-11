@@ -31,7 +31,7 @@ class StockService {
     }
 
     if (stock.currency != 'RUB') throw { message: 'Покупка и продажа акций в валюте находится в разработке' }
-    user.balance = doTransaction(user.balance, -transaction.cost)
+    user.balance = doTransaction(user.balance, -price * amount)
     const transaction = new Transaction({
       type: 'Обмен акций',
       symbol: stock.symbol,
