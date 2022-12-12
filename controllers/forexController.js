@@ -24,8 +24,11 @@ class forexController {
     try {
       const currentUser = req.user
       const { symbol } = req.params
-      const user = await forexService.closeAccount(currentUser, symbol)
-      return res.json({ user, message: 'Счет был успешно закрыт' })
+      const { user, transactionExchange, transactionClose, currency } = await forexService.closeAccount(
+        currentUser,
+        symbol
+      )
+      return res.json({ user, transactionExchange, transactionClose, currency, message: 'Счет был успешно закрыт' })
     } catch (e) {
       return res.status(400).json(e)
     }
@@ -55,7 +58,11 @@ class forexController {
     try {
       const currentUser = req.user
       const { symbol, amount } = req.body
-      const {user, currency, currencies, transaction} = await forexService.exchangeCurrency(currentUser, symbol, amount)
+      const { user, currency, currencies, transaction } = await forexService.exchangeCurrency(
+        currentUser,
+        symbol,
+        amount
+      )
       return res.json({ user, currency, currencies, transaction, message: 'Транзакция произведена' })
     } catch (e) {
       return res.status(400).json(e)

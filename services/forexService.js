@@ -84,13 +84,10 @@ class forexService {
     await Currency.deleteOne({ _id: currency.id })
 
     return {
-      id: user.id,
-      username: user.username,
-      name: user.name,
+      user: { id: user.id, username: user.username, name: user.name, balance: user.balance },
       transactionExchange,
       transactionClose,
       currency,
-      balance: user.balance,
     }
   }
 
