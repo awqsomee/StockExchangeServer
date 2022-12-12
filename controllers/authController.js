@@ -59,6 +59,7 @@ class authController {
       let user = await User.findOne({ email: lowerCaseUsername })
       if (!user) {
         user = await User.findOne({ username: lowerCaseUsername })
+        if (!user) user = await User.findOne({ username: email })
         if (!user) return res.status(404).json({ message: 'Пользователь не найден' })
       }
       const isPassValid = bcrypt.compareSync(password, user.password)
