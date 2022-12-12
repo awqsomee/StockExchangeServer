@@ -28,7 +28,13 @@ class authController {
         })
       }
       const hashPassword = await bcrypt.hash(password, 8)
-      const user = await User.create({ email: lowerCaseEmail, username: lowerCaseEmail, password: hashPassword, name })
+      const user = await User.create({
+        email: lowerCaseEmail,
+        username: email.split('@')[0],
+        lowercaseUsername: lowerCaseEmail.split('@')[0],
+        password: hashPassword,
+        name,
+      })
       const token = generateAccessToken(user.id)
       return res.json({
         token,
@@ -58,8 +64,7 @@ class authController {
       const lowerCaseUsername = email.toLowerCase()
       let user = await User.findOne({ email: lowerCaseUsername })
       if (!user) {
-        user = await User.findOne({ username: lowerCaseUsername })
-        if (!user) user = await User.findOne({ username: email })
+        user = await User.findOne({ lowercaseUsername: lowerCaseUsername })
         if (!user) return res.status(404).json({ message: 'Пользователь не найден' })
       }
       const isPassValid = bcrypt.compareSync(password, user.password)

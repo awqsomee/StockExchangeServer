@@ -27,15 +27,19 @@ class UserService {
       var candidate = await User.findOne({ email: newUserInfo.email })
       if (candidate?.email) throw { message: `Email ${candidate.email} уже используется` }
     }
-    if (user.username != newUserInfo.username) {
-      var candidate = await User.findOne({ username: newUserInfo.username })
-      if (candidate?.username) throw { message: `Username ${candidate.username} уже используется` }
+    if (user.lowercaseUsername != newUserInfo.username.toLowerCase()) {
+      var candidate = await User.findOne({ lowercaseUsername: newUserInfo.username.toLowerCase() })
+      if (candidate?.lowercaseUsername) throw { message: `Username ${candidate.username} уже используется` }
     }
     const validKeys = ['email', 'username', 'name', 'birthday', 'phoneNumber', 'passportNumber']
     Object.keys(newUserInfo).forEach((key) => validKeys.includes(key) || delete newUserInfo[key])
-    user = await User.findOneAndUpdate({ _id: currentUser.id }, newUserInfo, {
-      returnOriginal: false,
-    })
+    user = await User.findOneAndUpdate(
+      { _id: currentUser.id },
+      { ...newUserInfo, lowercaseUsername: user.username.toLowerCase() },
+      {
+        returnOriginal: false,
+      }
+    )
     return {
       id: user.id,
       email: user.email,

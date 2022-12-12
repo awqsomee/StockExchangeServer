@@ -4,6 +4,7 @@ const { Schema, model, ObjectId } = pkg
 const User = new Schema({
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
+  lowercaseUsername: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 
   avatar: { type: String, default: null },
