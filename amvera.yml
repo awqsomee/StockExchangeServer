@@ -5,5 +5,5 @@ meta:
     version: 18
 
 run:
-  command: npm run start
+  scriptName: index.js
   containerPort: 3000
