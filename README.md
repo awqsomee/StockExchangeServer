@@ -1,6 +1,10 @@
 # Сервер для биржи STONKS Exchange
-https://awqsomee.github.io/4D-Stock-Exchange
+Веб-приложение можно открыть, перейдя по ссылке https://awqsomee.github.io/4D-Stock-Exchange
 
+ИЛИ
+<br />
+   
+Установить по ссылке https://github.com/awqsomee/4D-Stock-Exchange
 ## Описание
 
 Серверная часть веб-приложения, которая дает доступ к просмотру акций и валют, а также регистрации, после которой можно обменивать акции и валюты по настоящему курсу.
