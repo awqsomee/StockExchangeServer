@@ -18,6 +18,7 @@ class userController {
       const user = await userService.changeUserInfo(currentUser, newUserInfo)
       return res.json({ user, message: 'Данные пользователя успешно изменены' })
     } catch (e) {
+      console.log(e.message)
       return res.status(400).json(e)
     }
   }

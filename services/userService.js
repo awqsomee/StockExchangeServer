@@ -27,15 +27,23 @@ class UserService {
       var candidate = await User.findOne({ email: newUserInfo.email })
       if (candidate?.email) throw { message: `Email ${candidate.email} уже используется` }
     }
-    if (user.lowercaseUsername != newUserInfo.username.toLowerCase()) {
-      var candidate = await User.findOne({ lowercaseUsername: newUserInfo.username.toLowerCase() })
-      if (candidate?.lowercaseUsername) throw { message: `Username ${candidate.username} уже используется` }
+    if (user.lowercaseUsername != newUserInfo.username.toLowerCase().replace(/\s+/g, '')) {
+      var candidate = await User.findOne({
+        lowercaseUsername: newUserInfo.username.toLowerCase().replace(/\s+/g, ''),
+      })
+      if (candidate?.lowercaseUsername)
+        throw { message: `Username ${candidate.username} уже используется` }
     }
     const validKeys = ['email', 'username', 'name', 'birthday', 'phoneNumber', 'passportNumber']
     Object.keys(newUserInfo).forEach((key) => validKeys.includes(key) || delete newUserInfo[key])
     user = await User.findOneAndUpdate(
       { _id: currentUser.id },
-      { ...newUserInfo, lowercaseUsername: user.username.toLowerCase() },
+      {
+        ...newUserInfo,
+        email: newUserInfo.email.replace(/\s+/g, ''),
+        lowercaseUsername: newUserInfo.username.toLowerCase().replace(/\s+/g, ''),
+        username: newUserInfo.username.replace(/\s+/g, ''),
+      },
       {
         returnOriginal: false,
       }
@@ -68,7 +76,8 @@ class UserService {
     let user = await User.findOne({ _id: currentUser.id })
     const avatarName = v4() + '.jpg'
     if (user.avatar) {
-      if (fs.existsSync(path.join(avatarPath, user.avatar))) fs.unlinkSync(path.join(avatarPath, user.avatar))
+      if (fs.existsSync(path.join(avatarPath, user.avatar)))
+        fs.unlinkSync(path.join(avatarPath, user.avatar))
     }
     file.mv(path.join(avatarPath, avatarName))
     user.avatar = avatarName

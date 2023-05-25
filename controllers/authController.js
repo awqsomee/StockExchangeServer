@@ -20,7 +20,7 @@ class authController {
       }
 
       const { email, password, name } = req.body
-      const lowerCaseEmail = email.toLowerCase()
+      const lowerCaseEmail = email.toLowerCase().replace(/\s+/g, '')
       const candidate = await User.findOne({ email: lowerCaseEmail })
       if (candidate) {
         return res.status(400).json({
@@ -61,7 +61,7 @@ class authController {
       }
 
       const { email, password } = req.body
-      const lowerCaseUsername = email.toLowerCase()
+      const lowerCaseUsername = email.toLowerCase().replace(/\s+/g, '')
       let user = await User.findOne({ email: lowerCaseUsername })
       if (!user) {
         user = await User.findOne({ lowercaseUsername: lowerCaseUsername })
