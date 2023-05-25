@@ -4,6 +4,7 @@ const { Schema, model, ObjectId } = pkg
 const Stock = new Schema({
   symbol: { type: String, required: true },
   name: { type: String, required: true },
+  shortname: { type: String, required: true },
   currency: { type: String, required: true },
   latestPrice: { type: Number, required: true },
   user: { type: ObjectId, ref: 'User' },

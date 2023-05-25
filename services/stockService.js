@@ -19,6 +19,7 @@ class StockService {
       stock = new Stock({
         symbol,
         name: stockInfo.name,
+        shortname: stockInfo.shortname,
         currency: stockInfo.currency,
         latestPrice: stockInfo.prices[0].close,
         user: user.id,
@@ -26,11 +27,13 @@ class StockService {
       })
       user.stocks.push(stock.id)
     } else {
-      if (amount < 0 && stock.amount < -amount) throw { message: 'У вас нет такого количества акций' }
+      if (amount < 0 && stock.amount < -amount)
+        throw { message: 'У вас нет такого количества акций' }
       stock.amount += amount
     }
 
-    if (stock.currency != 'RUB') throw { message: 'Покупка и продажа акций в валюте находится в разработке' }
+    if (stock.currency != 'RUB')
+      throw { message: 'Покупка и продажа акций в валюте находится в разработке' }
     user.balance = doTransaction(user.balance, -price * amount)
     const transaction = new Transaction({
       type: 'Обмен акций',
@@ -59,6 +62,7 @@ class StockService {
         id: stock.id,
         symbol: stock.symbol,
         name: stock.name,
+        shortname: stockInfo.shortname,
         currency: stock.currency,
         latestPrice: stock.latestPrice,
         amount: stock.amount,
@@ -178,6 +182,7 @@ class StockService {
           id: stock.id,
           symbol: stock.symbol,
           name: stock.name,
+          shortname: stock.shortname,
           currency: stock.currency,
           latestPrice: stock.latestPrice,
           amount: stock.amount,
