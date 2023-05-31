@@ -134,7 +134,6 @@ class StockService {
           group: data[12][2],
           type: data[13][2],
           groupname: data[14][2],
-          emitterId: data[15][2],
           engine,
           market,
           board,
