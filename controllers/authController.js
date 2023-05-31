@@ -30,7 +30,7 @@ class authController {
       const hashPassword = await bcrypt.hash(password, 8)
       const user = await User.create({
         email: lowerCaseEmail,
-        username: email.split('@')[0],
+        username: email.replace(/\s+/g, '').split('@')[0],
         lowercaseUsername: lowerCaseEmail.split('@')[0],
         password: hashPassword,
         name,
