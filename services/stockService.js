@@ -184,7 +184,7 @@ class StockService {
           symbol: stock.symbol,
           name: stock.name,
           shortname: stock.shortname,
-          latname: stockInfo.latname,
+          latname: stock.latname,
           currency: stock.currency,
           latestPrice: stock.latestPrice,
           amount: stock.amount,
