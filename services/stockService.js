@@ -43,7 +43,7 @@ class StockService {
       date: Date(),
       amount: amount,
       currency: stock.currency,
-      cost: price * amount,
+      cost: -price * amount,
       balance: user.balance,
       user: user.id,
     })
